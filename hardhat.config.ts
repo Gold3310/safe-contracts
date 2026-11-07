@@ -38,15 +38,16 @@ if (["mainnet", "sepolia"].includes(argv.network) && INFURA_KEY === undefined) {
     throw new Error(`Could not find Infura key in env, unable to connect to network ${argv.network}`);
 }
 
-const DEFAULT_MNEMONIC = "candy maple cake sugar pudding cream honey rich smooth crumble sweet treat";
 const DEFAULT_SOLIDITY_VERSION = "0.7.6";
 
+// Never attach the publicly known Hardhat test mnemonic to remote networks.
+// The local Hardhat network provides its own built-in test accounts.
 const sharedNetworkConfig: HttpNetworkUserConfig = {};
 if (PK) {
     sharedNetworkConfig.accounts = [PK];
-} else {
+} else if (MNEMONIC) {
     sharedNetworkConfig.accounts = {
-        mnemonic: MNEMONIC ?? DEFAULT_MNEMONIC,
+        mnemonic: MNEMONIC,
     };
 }
 const soliditySettings = SOLIDITY_SETTINGS ? JSON.parse(SOLIDITY_SETTINGS) : undefined;
